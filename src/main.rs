@@ -1,6 +1,8 @@
 use geng::prelude::*;
 
 mod game_state;
+mod diagram;
+mod constants;
 
 fn main() {
     logger::init().unwrap();

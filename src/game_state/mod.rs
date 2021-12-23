@@ -1,9 +1,12 @@
 mod draw;
-mod handle_event;
-mod update;
 mod fixed_update;
+mod handle_event;
+mod tick;
+mod update;
 
 use geng::Camera2d;
+
+use crate::diagram::*;
 
 use super::*;
 
@@ -11,6 +14,8 @@ pub struct GameState {
     geng: Geng,
     framebuffer_size: Vec2<usize>,
     camera: Camera2d,
+    tick_updater: FixedUpdater,
+    diagram: Diagram,
 }
 
 impl GameState {
@@ -23,6 +28,8 @@ impl GameState {
                 rotation: 0.0,
                 fov: 100.0,
             },
+            tick_updater: FixedUpdater::new(1.0, 0.0),
+            diagram: Diagram::new(vec2(10, 10)),
         }
     }
 }
@@ -34,6 +41,10 @@ impl geng::State for GameState {
     }
 
     fn update(&mut self, delta_time: f64) {
+        for _ in 0..self.tick_updater.update(delta_time) {
+            self.tick();
+        }
+
         let delta_time = delta_time as f32;
         self.update_impl(delta_time);
     }
