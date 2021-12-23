@@ -7,7 +7,6 @@ pub use directions::*;
 use super::*;
 
 pub type Position = Vec2<usize>;
-pub type RectPos = AABB<usize>;
 
 type BlockId = u32;
 
@@ -110,30 +109,27 @@ impl Diagram {
             .map(|block_id| self.blocks.get_mut(&block_id).expect(&format!("Cell map appears to be in an illegal state: a block with the id {} exists in the map at position {}, but it is unknown", block_id, position)))
     }
 
-    pub fn insert_block_at(&mut self, position: Position, mut block: Block) -> bool {
-        block.shift(position);
-        let positions = block.positions();
-        if !positions
-            .iter()
-            .all(|position| matches!(self.get_cell_at(*position), CellState::Empty))
-        {
+    pub fn insert_block_at(&mut self, position: Position, block: BlockType) -> bool {
+        if !matches!(self.get_cell_at(position), CellState::Empty) {
             return false;
         }
 
         let id = self.next_id();
-        for position in positions {
-            *self.get_cell_mut_at(position).unwrap() = CellState::Occupied(id);
-        }
-        self.blocks.insert(id, block);
+        *self.get_cell_mut_at(position).unwrap() = CellState::Occupied(id);
+        self.blocks.insert(
+            id,
+            Block {
+                position,
+                block_type: block,
+            },
+        );
 
         true
     }
 
     pub fn clear_at(&mut self, position: Position) {
         if let Some(block_id) = self.get_block_id_at(position) {
-            for position in self.blocks.remove(&block_id).unwrap().positions() {
-                *self.get_cell_mut_at(position).unwrap() = CellState::Empty;
-            }
+            *self.get_cell_mut_at(position).unwrap() = CellState::Empty;
         }
     }
 

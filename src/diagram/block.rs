@@ -1,14 +1,18 @@
 use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum Block {
+pub struct Block {
+    pub position: Position,
+    pub block_type: BlockType,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum BlockType {
     Wire {
-        position: Position,
         connections: Directions,
         queued_signal: Option<(SignalColor, Directions)>,
     },
     Source {
-        position: RectPos,
         signal_color: SignalColor,
         emit_positions: Vec<Position>,
     },
@@ -41,28 +45,26 @@ pub enum BlockAction {
 
 impl Block {
     pub fn tick(&mut self) -> Option<BlockAction> {
-        match self {
-            Block::Wire {
-                queued_signal,
-                position,
-                ..
-            } => queued_signal
-                .take()
-                .map(|(color, directions)| BlockAction::EmitSignal {
-                    color,
-                    positions: directions
-                        .deltas()
-                        .filter_map(|(delta, direction)| {
-                            let pos = delta + position.map(|x| x as isize);
-                            if pos.x < 0 || pos.y < 0 {
-                                None
-                            } else {
-                                Some((pos.map(|x| x as usize), direction))
-                            }
-                        })
-                        .collect(),
-                }),
-            Block::Source {
+        match &mut self.block_type {
+            BlockType::Wire { queued_signal, .. } => {
+                queued_signal
+                    .take()
+                    .map(|(color, directions)| BlockAction::EmitSignal {
+                        color,
+                        positions: directions
+                            .deltas()
+                            .filter_map(|(delta, direction)| {
+                                let pos = delta + self.position.map(|x| x as isize);
+                                if pos.x < 0 || pos.y < 0 {
+                                    None
+                                } else {
+                                    Some((pos.map(|x| x as usize), direction))
+                                }
+                            })
+                            .collect(),
+                    })
+            }
+            BlockType::Source {
                 signal_color,
                 emit_positions,
                 ..
@@ -77,40 +79,15 @@ impl Block {
     }
 
     pub fn receive_signal(&mut self, signal_color: SignalColor, signal_directions: Directions) {
-        match self {
-            Block::Wire {
+        match &mut self.block_type {
+            BlockType::Wire {
                 connections,
                 queued_signal,
                 ..
             } => {
                 *queued_signal = Some((signal_color, connections.and(signal_directions)));
             }
-            Block::Source { .. } => (),
-        }
-    }
-
-    pub fn positions(&self) -> Vec<Position> {
-        match self {
-            Block::Wire { position, .. } => vec![*position],
-            Block::Source { position, .. } => position.points().collect(),
-        }
-    }
-
-    pub fn shift(&mut self, shift: Position) {
-        match self {
-            Block::Wire { position, .. } => {
-                *position += shift;
-            }
-            Block::Source {
-                position,
-                emit_positions,
-                ..
-            } => {
-                *position = position.translate(shift);
-                emit_positions
-                    .iter_mut()
-                    .for_each(|position| *position += shift);
-            }
+            BlockType::Source { .. } => (),
         }
     }
 }

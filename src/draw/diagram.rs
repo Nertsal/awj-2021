@@ -1,6 +1,6 @@
 use geng::Draw2d;
 
-use crate::diagram::{Block, Diagram};
+use crate::diagram::{BlockType, Diagram};
 
 use super::*;
 
@@ -11,13 +11,12 @@ pub fn draw_diagram(
     camera: &impl geng::AbstractCamera2d,
 ) {
     for block in diagram.blocks() {
-        match block {
-            Block::Wire {
-                position,
+        match &block.block_type {
+            BlockType::Wire {
                 connections,
                 queued_signal,
             } => {
-                let center = position.map(|x| x as f32 + 0.5);
+                let center = block.position.map(|x| x as f32 + 0.5);
                 for delta in connections
                     .deltas()
                     .map(|(delta, _)| delta.map(|x| x as f32 / 2.0))
@@ -32,16 +31,12 @@ pub fn draw_diagram(
                     .draw_2d(geng, framebuffer, camera);
                 }
             }
-            Block::Source {
-                position,
-                signal_color,
-                ..
-            } => {
-                draw_2d::Quad::new(position.map(|x| x as f32), signal_color.color_f32()).draw_2d(
-                    geng,
-                    framebuffer,
-                    camera,
-                );
+            BlockType::Source { signal_color, .. } => {
+                draw_2d::Quad::new(
+                    AABB::point(block.position.map(|x| x as f32)).extend_positive(vec2(1.0, 1.0)),
+                    signal_color.color_f32(),
+                )
+                .draw_2d(geng, framebuffer, camera);
             }
         }
     }

@@ -1,6 +1,6 @@
 use geng::{Camera2d, MouseButton};
 
-use crate::diagram::{Block, Diagram, Directions, SignalColor};
+use crate::diagram::{BlockType, Diagram, Directions, SignalColor};
 
 use super::*;
 
@@ -11,7 +11,7 @@ pub struct EditorState {
     camera: Camera2d,
     diagram: Diagram,
     dragging: Option<Dragging>,
-    selected_block: Option<Block>,
+    selected_block: Option<BlockType>,
 }
 
 impl EditorState {
@@ -152,15 +152,13 @@ impl geng::State for EditorState {
                     self.selected_block = None;
                 }
                 geng::Key::Num2 => {
-                    self.selected_block = Some(Block::Source {
-                        position: AABB::from_corners(vec2(0, 0), vec2(1, 1)),
+                    self.selected_block = Some(BlockType::Source {
                         signal_color: SignalColor::Green,
                         emit_positions: vec![vec2(2, 0)],
                     });
                 }
                 geng::Key::Num3 => {
-                    self.selected_block = Some(Block::Wire {
-                        position: vec2(0, 0),
+                    self.selected_block = Some(BlockType::Wire {
                         connections: Directions::all(),
                         queued_signal: None,
                     });
