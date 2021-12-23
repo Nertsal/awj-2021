@@ -247,7 +247,12 @@
             },
             "block_type": {
                 "Source": {
-                    "signal_color": "Green",
+                    "signal_color": {
+                        "r": 0,
+                        "g": 1,
+                        "b": 0,
+                        "a": 1
+                    },
                     "emit_directions": {
                         "left": true,
                         "right": true,

@@ -25,7 +25,7 @@ pub fn draw_diagram(
                         Segment::new(center, center + delta),
                         constants::WIRE_WIDTH,
                         queued_signal
-                            .map(|(color, _)| color.color_f32())
+                            .map(|(color, _)| color)
                             .unwrap_or(constants::WIRE_COLOR),
                     )
                     .draw_2d(geng, framebuffer, camera);
@@ -34,7 +34,7 @@ pub fn draw_diagram(
             BlockType::Source { signal_color, .. } => {
                 draw_2d::Quad::new(
                     AABB::point(block.position.map(|x| x as f32)).extend_positive(vec2(1.0, 1.0)),
-                    signal_color.color_f32(),
+                    *signal_color,
                 )
                 .draw_2d(geng, framebuffer, camera);
             }

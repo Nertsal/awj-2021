@@ -153,7 +153,7 @@ impl geng::State for EditorState {
                 }
                 geng::Key::Num2 => {
                     self.selected_block = Some(BlockType::Source {
-                        signal_color: SignalColor::Green,
+                        signal_color: Color::GREEN,
                         emit_directions: Directions::all(),
                     });
                 }

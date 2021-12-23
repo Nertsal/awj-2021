@@ -18,22 +18,7 @@ pub enum BlockType {
     },
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub enum SignalColor {
-    Red,
-    Green,
-    Blue,
-}
-
-impl SignalColor {
-    pub fn color_f32(&self) -> Color<f32> {
-        match self {
-            SignalColor::Red => Color::RED,
-            SignalColor::Green => Color::GREEN,
-            SignalColor::Blue => Color::BLUE,
-        }
-    }
-}
+pub type SignalColor = Color<f32>;
 
 #[derive(Debug, Clone)]
 pub enum BlockAction {
