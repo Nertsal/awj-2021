@@ -23,7 +23,7 @@ impl EditorState {
             camera: Camera2d {
                 center: Vec2::ZERO,
                 rotation: 0.0,
-                fov: 100.0,
+                fov: 30.0,
             },
             diagram: diagram_file
                 .map(|file| Diagram::load_from_file(file).unwrap())
@@ -154,7 +154,7 @@ impl geng::State for EditorState {
                 geng::Key::Num2 => {
                     self.selected_block = Some(BlockType::Source {
                         signal_color: SignalColor::Green,
-                        emit_positions: vec![vec2(2, 0)],
+                        emit_directions: Directions::all(),
                     });
                 }
                 geng::Key::Num3 => {

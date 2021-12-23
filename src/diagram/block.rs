@@ -14,7 +14,7 @@ pub enum BlockType {
     },
     Source {
         signal_color: SignalColor,
-        emit_positions: Vec<Position>,
+        emit_directions: Directions,
     },
 }
 
@@ -54,25 +54,22 @@ impl Block {
                         positions: directions
                             .deltas()
                             .filter_map(|(delta, direction)| {
-                                let pos = delta + self.position.map(|x| x as isize);
-                                if pos.x < 0 || pos.y < 0 {
-                                    None
-                                } else {
-                                    Some((pos.map(|x| x as usize), direction))
-                                }
+                                shift_position(self.position, delta).map(|pos| (pos, direction))
                             })
                             .collect(),
                     })
             }
             BlockType::Source {
                 signal_color,
-                emit_positions,
+                emit_directions,
                 ..
             } => Some(BlockAction::EmitSignal {
                 color: *signal_color,
-                positions: emit_positions
-                    .iter()
-                    .map(|&position| (position, Directions::all()))
+                positions: emit_directions
+                    .deltas()
+                    .filter_map(|(delta, direction)| {
+                        shift_position(self.position, delta).map(|pos| (pos, direction))
+                    })
                     .collect(),
             }),
         }
@@ -85,7 +82,7 @@ impl Block {
                 queued_signal,
                 ..
             } => {
-                *queued_signal = Some((signal_color, connections.and(signal_directions)));
+                *queued_signal = Some((signal_color, *connections - signal_directions.opposite()));
             }
             BlockType::Source { .. } => (),
         }

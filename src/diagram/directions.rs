@@ -37,6 +37,15 @@ impl Directions {
         !Self::none()
     }
 
+    pub fn opposite(self) -> Self {
+        Self {
+            left: self.right,
+            right: self.left,
+            up: self.down,
+            down: self.up,
+        }
+    }
+
     one_direction!(left, right, up, down);
 
     pub fn deltas(&self) -> impl Iterator<Item = (Vec2<isize>, Directions)> {

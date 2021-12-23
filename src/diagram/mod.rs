@@ -130,6 +130,9 @@ impl Diagram {
     pub fn clear_at(&mut self, position: Position) {
         if let Some(block_id) = self.get_block_id_at(position) {
             *self.get_cell_mut_at(position).unwrap() = CellState::Empty;
+            self.blocks
+                .remove(&block_id)
+                .expect("Expected a block to be synced with the map");
         }
     }
 
@@ -145,5 +148,14 @@ impl Diagram {
     ) -> Result<(), Box<dyn std::error::Error>> {
         serde_json::to_writer(std::fs::File::create(file_path)?, self)?;
         Ok(())
+    }
+}
+
+pub fn shift_position(position: Position, shift: Vec2<isize>) -> Option<Position> {
+    let pos = shift + position.map(|x| x as isize);
+    if pos.x < 0 || pos.y < 0 {
+        None
+    } else {
+        Some(pos.map(|x| x as usize))
     }
 }

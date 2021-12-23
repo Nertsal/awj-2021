@@ -31,7 +31,7 @@ impl GameState {
             camera: Camera2d {
                 center: Vec2::ZERO,
                 rotation: 0.0,
-                fov: 100.0,
+                fov: 30.0,
             },
             tick_updater: FixedUpdater::new(1.0, 0.0),
             diagram: diagram_file

@@ -1,1 +1,279 @@
-{"cell_map":[["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"],["Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"]],"blocks":{},"next_id":0}
+{
+    "cell_map": [
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            {
+                "Occupied": 6
+            },
+            {
+                "Occupied": 7
+            },
+            {
+                "Occupied": 5
+            },
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            {
+                "Occupied": 4
+            },
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            {
+                "Occupied": 0
+            },
+            {
+                "Occupied": 1
+            },
+            {
+                "Occupied": 2
+            },
+            {
+                "Occupied": 3
+            },
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty"
+        ],
+        [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty"
+        ]
+    ],
+    "blocks": {
+        "2": {
+            "position": {
+                "x": 5,
+                "y": 6
+            },
+            "block_type": {
+                "Wire": {
+                    "connections": {
+                        "left": true,
+                        "right": true,
+                        "up": false,
+                        "down": false
+                    },
+                    "queued_signal": null
+                }
+            }
+        },
+        "1": {
+            "position": {
+                "x": 4,
+                "y": 6
+            },
+            "block_type": {
+                "Wire": {
+                    "connections": {
+                        "left": true,
+                        "right": true,
+                        "up": true,
+                        "down": true
+                    },
+                    "queued_signal": null
+                }
+            }
+        },
+        "3": {
+            "position": {
+                "x": 6,
+                "y": 6
+            },
+            "block_type": {
+                "Wire": {
+                    "connections": {
+                        "left": true,
+                        "right": false,
+                        "up": false,
+                        "down": true
+                    },
+                    "queued_signal": null
+                }
+            }
+        },
+        "6": {
+            "position": {
+                "x": 4,
+                "y": 4
+            },
+            "block_type": {
+                "Wire": {
+                    "connections": {
+                        "left": true,
+                        "right": true,
+                        "up": true,
+                        "down": true
+                    },
+                    "queued_signal": null
+                }
+            }
+        },
+        "7": {
+            "position": {
+                "x": 5,
+                "y": 4
+            },
+            "block_type": {
+                "Wire": {
+                    "connections": {
+                        "left": true,
+                        "right": true,
+                        "up": true,
+                        "down": true
+                    },
+                    "queued_signal": null
+                }
+            }
+        },
+        "4": {
+            "position": {
+                "x": 6,
+                "y": 5
+            },
+            "block_type": {
+                "Wire": {
+                    "connections": {
+                        "left": true,
+                        "right": true,
+                        "up": true,
+                        "down": true
+                    },
+                    "queued_signal": null
+                }
+            }
+        },
+        "0": {
+            "position": {
+                "x": 3,
+                "y": 6
+            },
+            "block_type": {
+                "Source": {
+                    "signal_color": "Green",
+                    "emit_directions": {
+                        "left": true,
+                        "right": true,
+                        "up": true,
+                        "down": true
+                    }
+                }
+            }
+        },
+        "5": {
+            "position": {
+                "x": 6,
+                "y": 4
+            },
+            "block_type": {
+                "Wire": {
+                    "connections": {
+                        "left": true,
+                        "right": true,
+                        "up": true,
+                        "down": true
+                    },
+                    "queued_signal": null
+                }
+            }
+        }
+    },
+    "next_id": 8
+}
