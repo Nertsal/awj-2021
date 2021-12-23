@@ -23,7 +23,7 @@ pub struct GameState {
 }
 
 impl GameState {
-    pub fn new(geng: &Geng) -> Self {
+    pub fn new(geng: &Geng, diagram_file: Option<&str>) -> Self {
         Self {
             geng: geng.clone(),
             framebuffer_size: vec2(1.0, 1.0),
@@ -34,7 +34,9 @@ impl GameState {
                 fov: 100.0,
             },
             tick_updater: FixedUpdater::new(1.0, 0.0),
-            diagram: Diagram::new(vec2(10, 10)),
+            diagram: diagram_file
+                .map(|file| Diagram::load_from_file(file).unwrap())
+                .unwrap_or(Diagram::new(vec2(10, 10))),
             dragging: None,
         }
     }
@@ -64,5 +66,15 @@ impl geng::State for GameState {
 
     fn handle_event(&mut self, event: geng::Event) {
         self.handle_event_impl(event);
+    }
+
+    fn transition(&mut self) -> Option<geng::Transition> {
+        if self.geng.window().is_key_pressed(geng::Key::R) {
+            Some(geng::Transition::Switch(Box::new(
+                editor_state::EditorState::new(&self.geng, Some(constants::DIAGRAM_FILE)),
+            )))
+        } else {
+            None
+        }
     }
 }

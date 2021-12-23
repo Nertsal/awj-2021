@@ -11,13 +11,14 @@ pub type RectPos = AABB<usize>;
 
 type BlockId = u32;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub enum CellState {
     Null,
     Empty,
     Occupied(BlockId),
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Diagram {
     cell_map: Vec<Vec<CellState>>,
     blocks: HashMap<BlockId, Block>,
@@ -93,5 +94,19 @@ impl Diagram {
     fn get_block_mut_at(&mut self, position: Position) -> Option<&mut Block> {
         self.get_block_id_at(position)
             .map(|block_id| self.blocks.get_mut(&block_id).expect(&format!("Cell map appears to be in an illegal state: a block with the id {} exists in the map at position {}, but it is unknown", block_id, position)))
+    }
+
+    pub fn load_from_file(
+        file_path: impl AsRef<std::path::Path>,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        Ok(serde_json::from_reader(std::fs::File::open(file_path)?)?)
+    }
+
+    pub fn save_to_file(
+        &self,
+        file_path: impl AsRef<std::path::Path>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        serde_json::to_writer(std::fs::File::create(file_path)?, self)?;
+        Ok(())
     }
 }

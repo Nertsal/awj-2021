@@ -2,7 +2,7 @@ use std::ops::Not;
 
 use super::*;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Directions {
     pub left: bool,
     pub right: bool,
