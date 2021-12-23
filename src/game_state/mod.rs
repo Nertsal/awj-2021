@@ -69,7 +69,7 @@ impl geng::State for GameState {
     }
 
     fn transition(&mut self) -> Option<geng::Transition> {
-        if self.geng.window().is_key_pressed(geng::Key::R) {
+        if self.geng.window().is_key_pressed(geng::Key::E) {
             Some(geng::Transition::Switch(Box::new(
                 editor_state::EditorState::new(&self.geng, Some(constants::DIAGRAM_FILE)),
             )))

@@ -88,4 +88,29 @@ impl Block {
             Block::Source { .. } => (),
         }
     }
+
+    pub fn positions(&self) -> Vec<Position> {
+        match self {
+            Block::Wire { position, .. } => vec![*position],
+            Block::Source { position, .. } => position.points().collect(),
+        }
+    }
+
+    pub fn shift(&mut self, shift: Position) {
+        match self {
+            Block::Wire { position, .. } => {
+                *position += shift;
+            }
+            Block::Source {
+                position,
+                emit_positions,
+                ..
+            } => {
+                *position = position.translate(shift);
+                emit_positions
+                    .iter_mut()
+                    .for_each(|position| *position += shift);
+            }
+        }
+    }
 }

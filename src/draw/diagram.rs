@@ -17,10 +17,10 @@ pub fn draw_diagram(
                 connections,
                 queued_signal,
             } => {
-                let center = position.map(|x| x as f32);
+                let center = position.map(|x| x as f32 + 0.5);
                 for delta in connections
                     .deltas()
-                    .map(|(delta, _)| delta.map(|x| x as f32))
+                    .map(|(delta, _)| delta.map(|x| x as f32 / 2.0))
                 {
                     draw_2d::Segment::new(
                         Segment::new(center, center + delta),

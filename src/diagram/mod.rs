@@ -22,6 +22,7 @@ pub enum CellState {
 pub struct Diagram {
     cell_map: Vec<Vec<CellState>>,
     blocks: HashMap<BlockId, Block>,
+    next_id: BlockId,
 }
 
 impl Diagram {
@@ -29,7 +30,14 @@ impl Diagram {
         Self {
             cell_map: vec![vec![CellState::Empty; size.x]; size.y],
             blocks: HashMap::new(),
+            next_id: 0,
         }
+    }
+
+    fn next_id(&mut self) -> BlockId {
+        let id = self.next_id;
+        self.next_id += 1;
+        id
     }
 
     pub fn tick(&mut self) {
@@ -75,6 +83,12 @@ impl Diagram {
             .unwrap_or(CellState::Null)
     }
 
+    fn get_cell_mut_at(&mut self, position: Position) -> Option<&mut CellState> {
+        self.cell_map
+            .get_mut(position.y)
+            .and_then(|row| row.get_mut(position.x))
+    }
+
     fn get_block_id_at(&self, position: Position) -> Option<BlockId> {
         match self.get_cell_at(position) {
             CellState::Occupied(block_id) => Some(block_id),
@@ -94,6 +108,33 @@ impl Diagram {
     fn get_block_mut_at(&mut self, position: Position) -> Option<&mut Block> {
         self.get_block_id_at(position)
             .map(|block_id| self.blocks.get_mut(&block_id).expect(&format!("Cell map appears to be in an illegal state: a block with the id {} exists in the map at position {}, but it is unknown", block_id, position)))
+    }
+
+    pub fn insert_block_at(&mut self, position: Position, mut block: Block) -> bool {
+        block.shift(position);
+        let positions = block.positions();
+        if !positions
+            .iter()
+            .all(|position| matches!(self.get_cell_at(*position), CellState::Empty))
+        {
+            return false;
+        }
+
+        let id = self.next_id();
+        for position in positions {
+            *self.get_cell_mut_at(position).unwrap() = CellState::Occupied(id);
+        }
+        self.blocks.insert(id, block);
+
+        true
+    }
+
+    pub fn clear_at(&mut self, position: Position) {
+        if let Some(block_id) = self.get_block_id_at(position) {
+            for position in self.blocks.remove(&block_id).unwrap().positions() {
+                *self.get_cell_mut_at(position).unwrap() = CellState::Empty;
+            }
+        }
     }
 
     pub fn load_from_file(

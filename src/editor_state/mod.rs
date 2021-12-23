@@ -1,6 +1,6 @@
 use geng::{Camera2d, MouseButton};
 
-use crate::diagram::Diagram;
+use crate::diagram::{Block, Diagram, Directions, SignalColor};
 
 use super::*;
 
@@ -11,6 +11,7 @@ pub struct EditorState {
     camera: Camera2d,
     diagram: Diagram,
     dragging: Option<Dragging>,
+    selected_block: Option<Block>,
 }
 
 impl EditorState {
@@ -28,11 +29,39 @@ impl EditorState {
                 .map(|file| Diagram::load_from_file(file).unwrap())
                 .unwrap_or(Diagram::new(vec2(10, 10))),
             dragging: None,
+            selected_block: None,
+        }
+    }
+
+    fn drag_update(&mut self) {
+        self.mouse_position = self.geng.window().mouse_pos().map(|x| x as f32);
+
+        match &mut self.dragging {
+            Some(dragging) => match dragging {
+                Dragging::MoveCamera {
+                    initial_mouse_pos,
+                    initial_camera_pos,
+                } => {
+                    let initial_world_pos = self
+                        .camera
+                        .screen_to_world(self.framebuffer_size, *initial_mouse_pos);
+                    let current_world_pos = self
+                        .camera
+                        .screen_to_world(self.framebuffer_size, self.mouse_position);
+                    let delta = initial_world_pos - current_world_pos;
+                    self.camera.center = *initial_camera_pos + delta;
+                }
+                Dragging::Selection { .. } => (),
+            },
+            None => (),
         }
     }
 }
 
 pub enum Dragging {
+    Selection {
+        initial_mouse_pos: Vec2<f32>,
+    },
     MoveCamera {
         initial_mouse_pos: Vec2<f32>,
         initial_camera_pos: Vec2<f32>,
@@ -42,10 +71,24 @@ pub enum Dragging {
 impl geng::State for EditorState {
     fn update(&mut self, delta_time: f64) {
         let delta_time = delta_time as f32;
+        self.drag_update();
     }
 
     fn draw(&mut self, framebuffer: &mut ugli::Framebuffer) {
+        self.framebuffer_size = framebuffer.size().map(|x| x as f32);
         ugli::clear(framebuffer, Some(Color::BLACK), None);
+
+        // Draw grid
+        crate::draw::grid::draw_grid(
+            self.diagram.map_width(),
+            self.diagram.map_height(),
+            &self.geng,
+            framebuffer,
+            &self.camera,
+        );
+
+        // Draw blocks
+        crate::draw::diagram::draw_diagram(&self.diagram, &self.geng, framebuffer, &self.camera);
     }
 
     fn handle_event(&mut self, event: geng::Event) {
@@ -61,32 +104,41 @@ impl geng::State for EditorState {
                         initial_camera_pos: self.camera.center,
                     })
                 }
+                MouseButton::Left => {
+                    self.dragging = Some(Dragging::Selection {
+                        initial_mouse_pos: position.map(|x| x as f32),
+                    });
+                }
                 _ => (),
             },
-            geng::Event::MouseUp { .. } => {
-                self.dragging = None;
-            }
-            geng::Event::MouseMove { position, .. } => {
-                self.mouse_position = position.map(|x| x as f32);
-
-                match &mut self.dragging {
-                    Some(dragging) => match dragging {
-                        Dragging::MoveCamera {
-                            initial_mouse_pos,
-                            initial_camera_pos,
-                        } => {
-                            let initial_world_pos = self
-                                .camera
-                                .screen_to_world(self.framebuffer_size, *initial_mouse_pos);
-                            let current_world_pos = self
+            geng::Event::MouseUp { .. } => match self.dragging.take() {
+                Some(dragging) => match dragging {
+                    Dragging::Selection { initial_mouse_pos } => {
+                        let delta = initial_mouse_pos - self.mouse_position;
+                        if delta.len().approx_eq(&0.0) {
+                            // Click
+                            let world_pos = self
                                 .camera
                                 .screen_to_world(self.framebuffer_size, self.mouse_position);
-                            let delta = initial_world_pos - current_world_pos;
-                            self.camera.center = *initial_camera_pos + delta;
+                            if world_pos.x >= 0.0 && world_pos.y >= 0.0 {
+                                let cell_pos = world_pos.map(|x| x.floor() as usize);
+                                match self.selected_block.clone() {
+                                    Some(block) => {
+                                        self.diagram.insert_block_at(cell_pos, block);
+                                    }
+                                    None => {
+                                        self.diagram.clear_at(cell_pos);
+                                    }
+                                }
+                            }
                         }
-                    },
-                    None => (),
-                }
+                    }
+                    Dragging::MoveCamera { .. } => (),
+                },
+                None => (),
+            },
+            geng::Event::MouseMove { .. } => {
+                self.drag_update();
             }
             geng::Event::Wheel { delta } => {
                 if self.geng.window().is_key_pressed(geng::Key::LCtrl) {
@@ -95,6 +147,26 @@ impl geng::State for EditorState {
                         .clamp(constants::ZOOM_MIN, constants::ZOOM_MAX);
                 }
             }
+            geng::Event::KeyDown { key } => match key {
+                geng::Key::Num1 => {
+                    self.selected_block = None;
+                }
+                geng::Key::Num2 => {
+                    self.selected_block = Some(Block::Source {
+                        position: AABB::from_corners(vec2(0, 0), vec2(1, 1)),
+                        signal_color: SignalColor::Green,
+                        emit_positions: vec![vec2(2, 0)],
+                    });
+                }
+                geng::Key::Num3 => {
+                    self.selected_block = Some(Block::Wire {
+                        position: vec2(0, 0),
+                        connections: Directions::all(),
+                        queued_signal: None,
+                    });
+                }
+                _ => (),
+            },
             _ => (),
         }
     }
