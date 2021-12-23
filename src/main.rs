@@ -3,6 +3,7 @@ use geng::prelude::*;
 mod game_state;
 mod diagram;
 mod constants;
+mod draw;
 
 fn main() {
     logger::init().unwrap();
