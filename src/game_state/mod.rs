@@ -38,19 +38,13 @@ impl GameState {
                 fov: 30.0,
             },
             face: {
-                let teeth_locations: Vec<_> = serde_json::from_str(&assets.teeth_config)
-                    .expect("Failed to deserialize teeth config");
-
-                assert_eq!(
-                    assets.teeth.len(),
-                    teeth_locations.len(),
-                    "There must be as many textures as there are locations in the config file!"
-                );
                 Face {
-                    teeth: teeth_locations
-                        .into_iter()
+                    teeth: assets
+                        .config
+                        .teeth_locations
+                        .iter()
                         .enumerate()
-                        .map(|(index, position)| Tooth {
+                        .map(|(index, &position)| Tooth {
                             texture: assets.teeth[index].clone(),
                             position,
                             state: ToothState::Healthy,

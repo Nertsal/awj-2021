@@ -3,6 +3,7 @@ use geng::prelude::*;
 mod assets;
 mod constants;
 mod game_state;
+mod config;
 
 fn main() {
     logger::init().unwrap();
