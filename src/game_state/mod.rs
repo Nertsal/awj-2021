@@ -53,7 +53,10 @@ impl GameState {
                 }
             },
             stick: Stick {
-                position: vec2(0.0, -constants::FACE_SIZE + constants::STICK_SIZE.y / 2.0),
+                position: vec2(
+                    0.0,
+                    -assets.config.face_size + assets.config.stick_size.y / 2.0,
+                ),
                 state: StickState::Moving,
             },
             transition: None,

@@ -10,13 +10,16 @@ impl GameState {
                 self.stick.position.x = move_towards_scalar(
                     self.stick.position.x,
                     mouse_world_pos.x,
-                    constants::STICK_MOVE_SPEED,
+                    self.assets.config.stick_move_speed * delta_time,
                 );
             }
             StickState::Poking { target } => {
                 // Move towards target
-                self.stick.position =
-                    move_towards(self.stick.position, target, constants::STICK_MOVE_SPEED);
+                self.stick.position = move_towards(
+                    self.stick.position,
+                    target,
+                    self.assets.config.stick_move_speed * delta_time,
+                );
 
                 if reached(self.stick.position, target) {
                     self.stick.state = StickState::Retreating;
@@ -26,16 +29,21 @@ impl GameState {
                 // Move back vertically and towards the mouse
                 self.stick.position.y = move_towards_scalar(
                     self.stick.position.y,
-                    constants::STICK_HEIGHT,
-                    constants::STICK_MOVE_SPEED,
+                    self.assets.config.stick_height,
+                    self.assets.config.stick_move_speed * delta_time,
                 );
                 self.stick.position.x = move_towards_scalar(
                     self.stick.position.x,
                     mouse_world_pos.x,
-                    constants::STICK_MOVE_SPEED,
+                    self.assets.config.stick_move_speed * delta_time,
                 );
 
-                if self.stick.position.y.approx_eq(&constants::STICK_HEIGHT) {
+                if self
+                    .stick
+                    .position
+                    .y
+                    .approx_eq(&self.assets.config.stick_height)
+                {
                     self.stick.state = StickState::Moving;
                 }
             }

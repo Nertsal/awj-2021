@@ -1,4 +1,14 @@
 {
+    "face_size": 15,
+    "stick_size": {
+        "x": 1,
+        "y": 5
+    },
+    "tooth_size": {
+        "x": 1,
+        "y": 1
+    },
+    "stick_move_speed": 50,
     "teeth_locations": [
         {
             "x": 0.3,
