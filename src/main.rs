@@ -1,9 +1,8 @@
 use geng::prelude::*;
 
 mod assets;
-mod constants;
-mod game_state;
 mod config;
+mod game_state;
 
 fn main() {
     logger::init().unwrap();
