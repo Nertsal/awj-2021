@@ -2,10 +2,11 @@ use super::*;
 
 pub struct Stick {
     pub position: Vec2<f32>,
+    pub state: StickState,
 }
 
-impl Stick {
-    pub fn point_at(&mut self, target: Vec2<f32>) {
-        self.position = target - vec2(0.0, constants::STICK_SIZE.y / 2.0);
-    }
+pub enum StickState {
+    Moving,
+    Poking { target: Vec2<f32> },
+    Retreating,
 }

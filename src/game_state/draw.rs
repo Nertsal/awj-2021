@@ -15,7 +15,8 @@ impl GameState {
 
         // Stick
         draw_2d::TexturedQuad::new(
-            AABB::point(self.stick.position).extend_symmetric(constants::STICK_SIZE / 2.0),
+            AABB::point(self.stick.position - vec2(0.0, constants::STICK_SIZE.y / 2.0))
+                .extend_symmetric(constants::STICK_SIZE / 2.0),
             &self.assets.stick,
         )
         .draw_2d(&self.geng, framebuffer, &self.camera);
