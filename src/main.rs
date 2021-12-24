@@ -1,6 +1,5 @@
 use geng::prelude::*;
 
-mod constants;
 mod game_state;
 
 fn main() {

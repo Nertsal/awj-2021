@@ -5,8 +5,6 @@ mod update;
 
 use geng::Camera2d;
 
-use self::handle_event::Dragging;
-
 use super::*;
 
 pub struct GameState {
@@ -14,7 +12,6 @@ pub struct GameState {
     framebuffer_size: Vec2<f32>,
     mouse_position: Vec2<f32>,
     camera: Camera2d,
-    dragging: Option<Dragging>,
 }
 
 impl GameState {
@@ -28,7 +25,6 @@ impl GameState {
                 rotation: 0.0,
                 fov: 30.0,
             },
-            dragging: None,
         }
     }
 }
@@ -40,8 +36,6 @@ impl geng::State for GameState {
     }
 
     fn update(&mut self, delta_time: f64) {
-        self.drag_update();
-
         let delta_time = delta_time as f32;
         self.update_impl(delta_time);
     }
