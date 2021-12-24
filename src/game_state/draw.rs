@@ -15,7 +15,7 @@ impl GameState {
         );
 
         // Teeth
-        for tooth in &self.face.teeth {
+        for tooth in self.face.teeth.iter() {
             draw_2d::TexturedQuad::new(tooth.poke_box(&self.assets.config), tooth.texture.clone())
                 .draw_2d(&self.geng, framebuffer, &self.camera);
         }

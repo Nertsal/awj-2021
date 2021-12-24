@@ -12,10 +12,11 @@
         "x": 0.1,
         "y": 0.1
     },
+    "crumb_speed": 1,
     "tooth_edge_size": 0.1,
     "stick_move_speed": 50,
     "stick_hit_radius": 1,
-    "teeth_locations": [
+    "top_teeth_locations": [
         {
             "x": 0.3,
             "y": 0.37
@@ -35,7 +36,9 @@
         {
             "x": 0.7,
             "y": 0.4
-        },
+        }
+    ],
+    "bottom_teeth_locations": [
         {
             "x": 0.3,
             "y": 0.14

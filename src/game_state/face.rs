@@ -1,6 +1,6 @@
 use super::*;
 
 pub struct Face {
-    pub teeth: Vec<Tooth>,
+    pub teeth: Teeth,
     pub crumbs: Vec<Crumb>,
 }
