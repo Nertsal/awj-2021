@@ -15,6 +15,9 @@ impl GameState {
                     StickState::Poking { .. } => self.stick.state = StickState::Retreating,
                     StickState::Retreating => (),
                 },
+                geng::Key::R => {
+                    self.transition = Some(Transition::Reload);
+                }
                 _ => (),
             },
             _ => (),

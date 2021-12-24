@@ -7,11 +7,22 @@ impl GameState {
         ugli::clear(framebuffer, Some(Color::BLACK), None);
 
         // Face
-        draw_2d::TexturedQuad::new(
-            AABB::ZERO.extend_uniform(constants::FACE_SIZE),
-            &self.assets.face,
-        )
-        .draw_2d(&self.geng, framebuffer, &self.camera);
+        let face = AABB::ZERO.extend_uniform(constants::FACE_SIZE);
+        draw_2d::TexturedQuad::new(face, &self.assets.face).draw_2d(
+            &self.geng,
+            framebuffer,
+            &self.camera,
+        );
+
+        // Teeth
+        for tooth in &self.face.teeth {
+            draw_2d::TexturedQuad::new(
+                AABB::point(tooth.position * face.size() + face.bottom_left())
+                    .extend_symmetric(constants::TOOTH_SIZE / 2.0),
+                tooth.texture.clone(),
+            )
+            .draw_2d(&self.geng, framebuffer, &self.camera);
+        }
 
         // Stick
         draw_2d::TexturedQuad::new(

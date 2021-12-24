@@ -1,3 +1,5 @@
 use super::*;
 
-pub struct Face {}
+pub struct Face {
+    pub teeth: Vec<Tooth>,
+}
