@@ -5,21 +5,23 @@ mod update;
 
 use geng::Camera2d;
 
+use crate::assets::Assets;
+
 use super::*;
 
 pub struct GameState {
     geng: Geng,
+    assets: Rc<Assets>,
     framebuffer_size: Vec2<f32>,
-    mouse_position: Vec2<f32>,
     camera: Camera2d,
 }
 
 impl GameState {
-    pub fn new(geng: &Geng) -> Self {
+    pub fn new(geng: &Geng, assets: &Rc<Assets>) -> Self {
         Self {
             geng: geng.clone(),
+            assets: assets.clone(),
             framebuffer_size: vec2(1.0, 1.0),
-            mouse_position: vec2(0.0, 0.0),
             camera: Camera2d {
                 center: Vec2::ZERO,
                 rotation: 0.0,

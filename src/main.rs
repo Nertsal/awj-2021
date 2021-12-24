@@ -1,6 +1,8 @@
 use geng::prelude::*;
 
+mod assets;
 mod game_state;
+mod constants;
 
 fn main() {
     logger::init().unwrap();
@@ -19,7 +21,18 @@ fn main() {
     }
 
     let geng = Geng::new("Anlaut Winter Jam 2021");
-    let state = game_state::GameState::new(&geng);
+    let assets = <assets::Assets as geng::LoadAsset>::load(&geng, ".");
 
-    geng::run(&geng, state);
+    geng::run(
+        &geng,
+        geng::LoadingScreen::new(&geng, geng::EmptyLoadingScreen, assets, {
+            let geng = geng.clone();
+            move |assets| {
+                let mut assets = assets.unwrap();
+                assets.init();
+
+                game_state::GameState::new(&geng, &Rc::new(assets))
+            }
+        }),
+    );
 }
