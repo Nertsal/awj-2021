@@ -12,6 +12,7 @@ struct ConfigSer {
     pub stick_hit_radius: f32,
     pub crumb_speed: f32,
     pub crumb_size: Vec2<f32>,
+    pub starting_crubs: usize,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -28,6 +29,7 @@ pub struct Config {
     pub stick_hit_radius: f32,
     pub crumb_speed: f32,
     pub crumb_size: Vec2<f32>,
+    pub starting_crubs: usize,
 }
 
 impl From<ConfigSer> for Config {
@@ -43,6 +45,7 @@ impl From<ConfigSer> for Config {
             stick_hit_radius: config.stick_hit_radius,
             crumb_size: config.crumb_size,
             crumb_speed: config.crumb_speed,
+            starting_crubs: config.starting_crubs,
             stick_height: config.tooth_size.y - config.face_radius,
         }
     }

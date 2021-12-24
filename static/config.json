@@ -1,4 +1,5 @@
 {
+    "starting_crubs": 10,
     "face_radius": 15,
     "stick_size": {
         "x": 1,

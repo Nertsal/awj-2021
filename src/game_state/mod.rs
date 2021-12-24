@@ -48,6 +48,21 @@ impl GameState {
                 .collect()
         }
 
+        let teeth = Teeth {
+            top: teeth_locations_to_teeth(
+                &assets.config.top_teeth_locations,
+                &assets.top_teeth,
+                &assets.config,
+            ),
+            bottom: teeth_locations_to_teeth(
+                &assets.config.bottom_teeth_locations,
+                &assets.bottom_teeth,
+                &assets.config,
+            ),
+        };
+
+        let mut rng = global_rng();
+
         let state = Self {
             geng: geng.clone(),
             assets: assets.clone(),
@@ -58,23 +73,22 @@ impl GameState {
                 fov: 30.0,
             },
             face: Face {
-                teeth: Teeth {
-                    top: teeth_locations_to_teeth(
-                        &assets.config.top_teeth_locations,
-                        &assets.top_teeth,
-                        &assets.config,
-                    ),
-                    bottom: teeth_locations_to_teeth(
-                        &assets.config.bottom_teeth_locations,
-                        &assets.bottom_teeth,
-                        &assets.config,
-                    ),
-                },
-                crumbs: vec![Crumb {
-                    tooth_position: ToothPosition::Top(0),
-                    local_position: vec2(0.0, 0.0),
-                    target: CrumbTarget::Local(vec2(0.0, 0.0)),
-                }],
+                crumbs: (0..assets.config.starting_crubs)
+                    .map(|_| Crumb {
+                        tooth_position: {
+                            let position = if rng.gen() {
+                                ToothPosition::Top(0)
+                            } else {
+                                ToothPosition::Bottom(0)
+                            };
+                            let row_len = teeth.get_row_len(position);
+                            position.indexed(rng.gen_range(0..row_len))
+                        },
+                        local_position: vec2(0.5, 0.5),
+                        target: CrumbTarget::Local(vec2(0.5, 0.5)),
+                    })
+                    .collect(),
+                teeth,
             },
             stick: Stick {
                 position: vec2(
