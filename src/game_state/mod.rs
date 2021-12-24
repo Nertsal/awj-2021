@@ -1,11 +1,15 @@
 mod draw;
-mod fixed_update;
+mod face;
 mod handle_event;
+mod stick;
 mod update;
 
 use geng::Camera2d;
 
 use crate::assets::Assets;
+
+use self::face::*;
+use self::stick::*;
 
 use super::*;
 
@@ -14,6 +18,9 @@ pub struct GameState {
     assets: Rc<Assets>,
     framebuffer_size: Vec2<f32>,
     camera: Camera2d,
+
+    face: Face,
+    stick: Stick,
 }
 
 impl GameState {
@@ -26,6 +33,10 @@ impl GameState {
                 center: Vec2::ZERO,
                 rotation: 0.0,
                 fov: 30.0,
+            },
+            face: Face {},
+            stick: Stick {
+                position: vec2(0.0, -constants::FACE_SIZE + constants::STICK_SIZE.y / 2.0),
             },
         }
     }
@@ -40,11 +51,6 @@ impl geng::State for GameState {
     fn update(&mut self, delta_time: f64) {
         let delta_time = delta_time as f32;
         self.update_impl(delta_time);
-    }
-
-    fn fixed_update(&mut self, delta_time: f64) {
-        let delta_time = delta_time as f32;
-        self.fixed_update_impl(delta_time);
     }
 
     fn handle_event(&mut self, event: geng::Event) {
