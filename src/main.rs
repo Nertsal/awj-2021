@@ -1,9 +1,6 @@
 use geng::prelude::*;
 
 mod constants;
-mod diagram;
-mod draw;
-mod editor_state;
 mod game_state;
 
 fn main() {
@@ -23,7 +20,7 @@ fn main() {
     }
 
     let geng = Geng::new("Anlaut Winter Jam 2021");
-    let state = game_state::GameState::new(&geng, Some(constants::DIAGRAM_FILE));
+    let state = game_state::GameState::new(&geng);
 
     geng::run(&geng, state);
 }
