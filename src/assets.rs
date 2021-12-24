@@ -4,6 +4,7 @@ use super::*;
 pub struct Assets {
     pub face: ugli::Texture,
     pub stick: ugli::Texture,
+    pub crumb: ugli::Texture,
     #[asset(path = "teeth/*.png", range = "1..=10")]
     pub teeth: Vec<Rc<ugli::Texture>>,
     pub config: config::Config,
@@ -19,6 +20,7 @@ impl Assets {
 
         self.face.set_filter(ugli::Filter::Nearest);
         self.stick.set_filter(ugli::Filter::Nearest);
+        self.crumb.set_filter(ugli::Filter::Nearest);
         for tooth in &mut self.teeth {
             Rc::get_mut(tooth)
                 .unwrap()

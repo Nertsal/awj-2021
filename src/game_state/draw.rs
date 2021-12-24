@@ -7,7 +7,7 @@ impl GameState {
         ugli::clear(framebuffer, Some(Color::BLACK), None);
 
         // Face
-        let face = AABB::ZERO.extend_uniform(self.assets.config.face_size);
+        let face = AABB::ZERO.extend_uniform(self.assets.config.face_radius);
         draw_2d::TexturedQuad::new(face, &self.assets.face).draw_2d(
             &self.geng,
             framebuffer,
@@ -16,10 +16,16 @@ impl GameState {
 
         // Teeth
         for tooth in &self.face.teeth {
+            draw_2d::TexturedQuad::new(tooth.poke_box(&self.assets.config), tooth.texture.clone())
+                .draw_2d(&self.geng, framebuffer, &self.camera);
+        }
+
+        // Crumbs
+        for crumb in &self.face.crumbs {
             draw_2d::TexturedQuad::new(
-                AABB::point(tooth.position * face.size() + face.bottom_left())
-                    .extend_symmetric(self.assets.config.tooth_size / 2.0),
-                tooth.texture.clone(),
+                AABB::point(crumb.world_position(&self.face.teeth, &self.assets.config))
+                    .extend_symmetric(self.assets.config.crumb_size),
+                &self.assets.crumb,
             )
             .draw_2d(&self.geng, framebuffer, &self.camera);
         }

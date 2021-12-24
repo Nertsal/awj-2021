@@ -1,3 +1,4 @@
+mod crumb;
 mod draw;
 mod face;
 mod handle_event;
@@ -8,7 +9,9 @@ mod update;
 use geng::Camera2d;
 
 use crate::assets::Assets;
+use crate::config::Config;
 
+use self::crumb::*;
 use self::face::*;
 use self::stick::*;
 use self::tooth::*;
@@ -37,25 +40,28 @@ impl GameState {
                 rotation: 0.0,
                 fov: 30.0,
             },
-            face: {
-                Face {
-                    teeth: assets
-                        .config
-                        .teeth_locations
-                        .iter()
-                        .enumerate()
-                        .map(|(index, &position)| Tooth {
-                            texture: assets.teeth[index].clone(),
-                            position,
-                            state: ToothState::Healthy,
-                        })
-                        .collect(),
-                }
+            face: Face {
+                teeth: assets
+                    .config
+                    .teeth_locations
+                    .iter()
+                    .enumerate()
+                    .map(|(index, &position)| Tooth {
+                        texture: assets.teeth[index].clone(),
+                        position: position * assets.config.face_radius * 2.0
+                            - vec2(assets.config.face_radius, assets.config.face_radius),
+                        state: ToothState::Healthy,
+                    })
+                    .collect(),
+                crumbs: vec![Crumb {
+                    tooth_position: 0,
+                    local_position: vec2(0.0, 0.0),
+                }],
             },
             stick: Stick {
                 position: vec2(
                     0.0,
-                    -assets.config.face_size + assets.config.stick_size.y / 2.0,
+                    -assets.config.face_radius + assets.config.stick_size.y / 2.0,
                 ),
                 state: StickState::Moving,
             },

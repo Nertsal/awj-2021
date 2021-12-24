@@ -1,5 +1,5 @@
 {
-    "face_size": 15,
+    "face_radius": 15,
     "stick_size": {
         "x": 1,
         "y": 5
@@ -8,7 +8,13 @@
         "x": 1,
         "y": 1
     },
+    "crumb_size": {
+        "x": 0.1,
+        "y": 0.1
+    },
+    "tooth_edge_size": 0.1,
     "stick_move_speed": 50,
+    "stick_hit_radius": 1,
     "teeth_locations": [
         {
             "x": 0.3,

@@ -23,6 +23,7 @@ impl GameState {
 
                 if reached(self.stick.position, target) {
                     self.stick.state = StickState::Retreating;
+                    self.poke(target);
                 }
             }
             StickState::Retreating => {
@@ -47,6 +48,27 @@ impl GameState {
                     self.stick.state = StickState::Moving;
                 }
             }
+        }
+    }
+
+    fn poke(&mut self, poke_position: Vec2<f32>) {
+        match self
+            .face
+            .teeth
+            .iter()
+            .enumerate()
+            .find(|(_, tooth)| tooth.poke_box(&self.assets.config).contains(poke_position))
+        {
+            Some((tooth_index, _)) => {
+                self.face.crumbs.retain(|crumb| {
+                    crumb.tooth_position != tooth_index
+                        && (poke_position
+                            - crumb.world_position(&self.face.teeth, &self.assets.config))
+                        .len()
+                            > self.assets.config.stick_hit_radius
+                });
+            }
+            None => (),
         }
     }
 }
