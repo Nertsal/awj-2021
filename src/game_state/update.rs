@@ -31,7 +31,7 @@ impl GameState {
                 // Move back vertically and towards the mouse
                 self.stick.position.y = move_towards_scalar(
                     self.stick.position.y,
-                    self.assets.config.stick_height,
+                    self.assets.config.stick_height(),
                     self.assets.config.stick_move_speed * delta_time,
                 );
                 self.stick.position.x = move_towards_scalar(
@@ -44,7 +44,7 @@ impl GameState {
                     .stick
                     .position
                     .y
-                    .approx_eq(&self.assets.config.stick_height)
+                    .approx_eq(&self.assets.config.stick_height())
                 {
                     self.stick.state = StickState::Moving;
                 }
