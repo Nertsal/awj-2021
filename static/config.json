@@ -10,10 +10,10 @@
         "y": 3
     },
     "crumb_size": {
-        "x": 0.1,
-        "y": 0.1
+        "x": 0.2,
+        "y": 0.2
     },
-    "crumb_speed": 1,
+    "crumb_speed": 0.5,
     "tooth_edge_size": 0.1,
     "stick_move_speed": 50,
     "stick_hit_radius": 1,
