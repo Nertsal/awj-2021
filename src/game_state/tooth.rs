@@ -1,8 +1,8 @@
 use super::*;
 
 pub struct Teeth {
-    pub top: Vec<Tooth>,
-    pub bottom: Vec<Tooth>,
+    pub top: Vec<Option<Tooth>>,
+    pub bottom: Vec<Option<Tooth>>,
 }
 
 impl Teeth {
@@ -11,6 +11,7 @@ impl Teeth {
             ToothPosition::Top(index) => self.top.get(index),
             ToothPosition::Bottom(index) => self.bottom.get(index),
         }
+        .and_then(|t| t.as_ref())
     }
 
     pub fn get_row_len(&self, position: ToothPosition) -> usize {
@@ -21,7 +22,14 @@ impl Teeth {
     }
 
     pub fn iter(&self) -> impl Iterator<Item = &Tooth> {
-        self.top.iter().chain(self.bottom.iter())
+        self.top
+            .iter()
+            .filter_map(|t| t.as_ref())
+            .chain(self.bottom.iter().filter_map(|t| t.as_ref()))
+    }
+
+    pub fn iter_raw_mut(&mut self) -> impl Iterator<Item = &mut Option<Tooth>> {
+        self.top.iter_mut().chain(self.bottom.iter_mut())
     }
 }
 
@@ -57,7 +65,8 @@ impl ToothPosition {
 pub struct Tooth {
     pub texture: Rc<ugli::Texture>,
     pub position: Vec2<f32>,
-    pub state: ToothState,
+    pub is_loose: bool,
+    pub is_ill: bool,
 }
 
 impl Tooth {
@@ -69,8 +78,4 @@ impl Tooth {
         self.poke_box(config)
             .extend_symmetric(vec2(-config.tooth_edge_size, 0.0))
     }
-}
-
-pub enum ToothState {
-    Healthy,
 }

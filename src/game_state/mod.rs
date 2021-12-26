@@ -36,16 +36,19 @@ impl GameState {
             textures: &[Rc<ugli::Texture>],
             config: &Config,
             offset: Vec2<f32>,
-        ) -> Vec<Tooth> {
+        ) -> Vec<Option<Tooth>> {
             locations
                 .iter()
                 .enumerate()
-                .map(|(index, &position)| Tooth {
-                    texture: textures[index].clone(),
-                    position: position * config.face_radius * 2.0
-                        - vec2(config.face_radius, config.face_radius)
-                        + offset,
-                    state: ToothState::Healthy,
+                .map(|(index, &position)| {
+                    Some(Tooth {
+                        texture: textures[index].clone(),
+                        position: position * config.face_radius * 2.0
+                            - vec2(config.face_radius, config.face_radius)
+                            + offset,
+                        is_loose: false,
+                        is_ill: false,
+                    })
                 })
                 .collect()
         }

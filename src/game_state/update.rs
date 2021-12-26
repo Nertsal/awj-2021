@@ -76,25 +76,34 @@ impl GameState {
 
                     if reached(crumb.local_position, target) {
                         let row_len = self.face.teeth.get_row_len(crumb.tooth_position);
-                        let new_pos = if left {
-                            crumb.tooth_position.indexed(
-                                crumb
-                                    .tooth_position
-                                    .get_index()
-                                    .checked_sub(1)
-                                    .unwrap_or(row_len - 1),
-                            )
-                        } else {
-                            let mut index = crumb.tooth_position.get_index() + 1;
-                            if index >= row_len {
-                                index = 0;
-                            }
-                            crumb.tooth_position.indexed(index)
-                        };
-                        crumb.tooth_position = new_pos;
-                        crumb.local_position.x = 1.0 - target_x;
+                        let mut current_position = crumb.tooth_position;
+                        // Find the closest tooth
+                        loop {
+                            current_position = if left {
+                                current_position.indexed(
+                                    current_position
+                                        .get_index()
+                                        .checked_sub(1)
+                                        .unwrap_or(row_len - 1),
+                                )
+                            } else {
+                                let mut index = current_position.get_index() + 1;
+                                if index >= row_len {
+                                    index = 0;
+                                }
+                                current_position.indexed(index)
+                            };
 
-                        crumb.target = crumb_random_target();
+                            // Check if the tooth exists
+                            if self.face.teeth.get_tooth(current_position).is_some() {
+                                crumb.tooth_position = current_position;
+                                crumb.local_position.x = 1.0 - target_x;
+
+                                crumb.target = crumb_random_target();
+                                break;
+                            }
+                            // The tooth does not exist, try again
+                        }
                     }
                 }
                 CrumbTarget::ToothVertical { x } => {
@@ -111,8 +120,11 @@ impl GameState {
 
                     if reached(crumb.local_position, target) {
                         let new_pos = crumb.tooth_position.opposite();
-                        crumb.tooth_position = new_pos;
-                        crumb.local_position.y = 1.0 - target_y;
+                        // Check if the tooth exists
+                        if self.face.teeth.get_tooth(new_pos).is_some() {
+                            crumb.tooth_position = new_pos;
+                            crumb.local_position.y = 1.0 - target_y;
+                        }
 
                         crumb.target = crumb_random_target();
                     }
@@ -122,9 +134,29 @@ impl GameState {
     }
 
     fn poke(&mut self, poke_position: Vec2<f32>) {
+        // Poke tooth
+        if let Some(raw_tooth) = self.face.teeth.iter_raw_mut().find(|tooth| {
+            tooth
+                .as_ref()
+                .map(|tooth| tooth.hurt_box(&self.assets.config).contains(poke_position))
+                .unwrap_or(false)
+        }) {
+            let tooth = raw_tooth.as_mut().unwrap();
+            if tooth.is_loose {
+                // Break tooth
+                raw_tooth.take();
+            } else {
+                // Make loose
+                tooth.is_loose = true;
+            }
+        }
+
+        // Clean crumbs
         self.face.crumbs.retain(|crumb| {
-            (poke_position - crumb.world_position(&self.face.teeth, &self.assets.config)).len()
-                > self.assets.config.stick_hit_radius
+            self.face.teeth.get_tooth(crumb.tooth_position).is_some()
+                && (poke_position - crumb.world_position(&self.face.teeth, &self.assets.config))
+                    .len()
+                    > self.assets.config.stick_hit_radius
         });
     }
 }
